@@ -91,6 +91,9 @@ for item in WylistowaneTripy:
 	PrzesiadkiPociagu = item.find("div", {"class": "changes"}).text
 	CzasPodrozy = item.find("span", {"class": "duration"}).text
 	ListowaniePrzewoznikow = item.find_all("div", {"class": "carrier"})
+	StacjeWrapper = item.find("span", {"class": "form-content-wrapper"})
+	StacjeRun = item.find_all("li", {"class": "station"})
+
 
 	PStrip = PrzesiadkiPociagu.replace("Przesiadki:", "")
 	PStrip2 = PStrip.replace(" ", "")
@@ -107,11 +110,36 @@ for item in WylistowaneTripy:
 		PeronOstatni = "N/A"
 
 	print(f"Trasa Pociągu: {TrasaPociagu_PierwszaStacja.strip()} [{PeronPierwszy}] → {TrasaPociagu_OstatniaStacja.strip()} [{PeronOstatni}]\n")
-
 	ListaNumPoc = ""
 	for przewoznik in ListowaniePrzewoznikow:
-		NumPoc = przewoznik.find("div", {"class": "hidden"}).text
-		ListaNumPoc+=(str(NumPoc)+"\n")
+		NumPoc = przewoznik.find("div", {"class": "hidden"})
+		if NumPoc:
+			CarrierPociagu = przewoznik.find("div", {"class": "hidden"}).text
+		else:
+			CarrierPociagu = "Przejście Pieszo"
+
+		ListaNumPoc+=(str(CarrierPociagu)+"\n")
+
+	ListaStacje = ""
+	for StacjaName in StacjeRun:
+		NazwaStacji = StacjaName.find("span", {"class": "name"}).text
+		CzasStacji = StacjaName.find("span", {"class": "arrival-time"})
+		OpoznieniaStacji = StacjaName.find("span", {"class": "difference-time"})
+
+		if len(CzasStacji.contents) > 0:
+			CzasStacjiTekst = StacjaName.find("span", {"class": "arrival-time"}).text
+		else:
+			CzasStacjiTekst = "N/A"
+
+		if OpoznieniaStacji:
+			if len(OpoznieniaStacji.contents) > 0:
+				OpoznionaStacja = StacjaName.find("span", {"class": "difference-time"}).text
+			else:
+				OpoznionaStacja = "N/A"
+		else:
+			OpoznionaStacja = "N/A"
+
+		ListaStacje+=(f"{NazwaStacji} 🢒 {CzasStacjiTekst} [{OpoznionaStacja}] \n")
 		
 	print(f"⮮ Przewoznik/cy\n")
 	print(f"{ListaNumPoc}") 
@@ -125,6 +153,9 @@ for item in WylistowaneTripy:
 		CenaPrzejazduOut = print(f"Cena Przejazdu 🢒\033[1;32;40m {CenaPrzejazdu} \033[0;37;40mZŁ\n")
 	else:
 		CenaPrzejazduOut = print(f"Cena Przejazdu 🢒\033[1;31;40m Niedostępna\033[0;37;40m\n")
+
+	print(f"⮮ Trasa Przejazdu [Stacja / Czas Odjazdu / Opóżnienie]\n")
+	print(f"{ListaStacje}") 
 
 	print("————————————————————————————————————————\n")
 
