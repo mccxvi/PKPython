@@ -43,4 +43,3 @@ WebDriverPath = ""
 
 - — English Localization
 - — User specified time of the connection
-- — Preview of a complete route with their time of departure/arrival and track numbers
